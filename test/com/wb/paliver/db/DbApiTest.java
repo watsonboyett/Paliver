@@ -45,7 +45,7 @@ public class DbApiTest {
 	}
 	
 	
-	public static void testSearchTable(SearchDbApi db) throws IOException, InterruptedException {
+	public static void testSearchTable(SearchDbApi dbApi) throws IOException, InterruptedException {
 		System.out.println("Running Db write/read test on Search table...");
 				
 		int numRows = 100;
@@ -53,8 +53,8 @@ public class DbApiTest {
 			SearchResult sr = new SearchResult();
 			sr.randomData();
 		
-			db.saveSearchResult(sr);
-			SearchResult srFetch = db.getSearchResult("select * from search where subject_id = " + sr.subject_id + " and time = '" + sr.time + "'");			
+			dbApi.saveSearchResult(sr);
+			SearchResult srFetch = dbApi.getSearchResult("select * from search where subject_id = " + sr.subject_id + " and time = '" + sr.time + "'");			
 			if (srFetch.compareTo(sr)) {
 				System.out.println("fetched result does not match inserted one.");
 				Thread.sleep(3000);
@@ -66,7 +66,7 @@ public class DbApiTest {
 		System.out.println("\nDone.");
 	}
 
-	public static void testSubjectTable(SearchDbApi db) throws IOException, InterruptedException {
+	public static void testSubjectTable(SearchDbApi dbApi) throws IOException, InterruptedException {
 		System.out.println("Running Db write/read test on Subject table...");
 				
 		int numRows = 100;
@@ -74,8 +74,8 @@ public class DbApiTest {
 			SubjectInfo si = new SubjectInfo();
 			si.randomData();
 
-			db.saveSubjectInfo(si);
-			SubjectInfo siFetch = db.getSubjectInfo("select * from subject where subject = '" + si.subject + "'");			
+			dbApi.saveSubjectInfo(si);
+			SubjectInfo siFetch = dbApi.getSubjectInfo("select * from subject where subject = '" + si.subject + "'");			
 			if (siFetch.compareTo(si)) {
 				System.out.println("fetched result does not match inserted one.");
 				Thread.sleep(3000);
@@ -88,7 +88,7 @@ public class DbApiTest {
 		System.out.println("\nDone.");
 	}
 	
-	public static void testTopicTable(SearchDbApi db) throws IOException, InterruptedException {
+	public static void testTopicTable(SearchDbApi dbApi) throws IOException, InterruptedException {
 		System.out.println("Running Db write/read test of Topic table...");
 				
 		int numRows = 100;
@@ -96,8 +96,8 @@ public class DbApiTest {
 			TopicInfo ti = new TopicInfo();
 			ti.randomData();
 		
-			db.saveTopicInfo(ti);
-			TopicInfo tiFetch = db.getTopicInfo("select * from topic where topic = '" + ti.topic + "'");			
+			dbApi.saveTopicInfo(ti);
+			TopicInfo tiFetch = dbApi.getTopicInfo("select * from topic where topic = '" + ti.topic + "'");			
 			if (tiFetch.compareTo(ti)) {
 				System.out.println("fetched result does not match inserted one.");
 				Thread.sleep(3000);
