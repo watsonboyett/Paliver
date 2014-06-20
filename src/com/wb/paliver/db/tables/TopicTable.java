@@ -10,13 +10,23 @@ import org.stringtemplate.v4.ST;
 
 import com.wb.paliver.SearchDbApi;
 import com.wb.paliver.data.TopicInfo;
+import com.wb.paliver.db.DbImpl_DerbyEmbedded;
+import com.wb.paliver.db.DbImpl_MySql;
 
 public class TopicTable {
 
 	public final static String TABLE_NAME = "topic";
 	
 	public static void createTable(SearchDbApi db) {
-		ST st = db.getInstanceOf("topic_create");
+		ST st;
+		if (db.getDbType().equals(DbImpl_MySql.dbType)) {
+			st = db.getInstanceOf("topic_create");
+		} else if (db.getDbType().equals(DbImpl_DerbyEmbedded.dbType)) {
+			st = db.getInstanceOf("topic_create_derby");
+		} else {
+			// todo: handle this error case better
+			st = null;
+		}
 		TableUtils.createTable(db, TABLE_NAME, st);
 	}
 	
@@ -35,11 +45,9 @@ public class TopicTable {
 			int i = 1;
 			try {
 				PreparedStatement stmt = db.getConnection().prepareStatement(st.render());
-				
+				//stmt.setLong(i++, ti.topic_id);
 				stmt.setString(i++, ti.topic);
-				stmt.setLong(i++, ti.topic_id);
-				
-				stmt.setString(i++, ti.descrip);
+				stmt.setString(i++, ti.info);
 				
 				stmt.execute();
 				stmt.close();				
@@ -71,11 +79,10 @@ public class TopicTable {
 				
 				TopicInfo ti = new TopicInfo();
 				tiList = new ArrayList<TopicInfo>();
-				while (rs.next()) {							
+				while (rs.next()) {				
+					//ti.topic_id = rs.getLong("topic_id");
 					ti.topic = rs.getString("topic");
-					ti.topic_id = rs.getLong("topic_id");
-					
-					ti.descrip = rs.getString("descrip");
+					ti.info = rs.getString("info");
 					
 					tiList.add(ti);
 				}

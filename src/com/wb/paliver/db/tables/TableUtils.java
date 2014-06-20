@@ -24,6 +24,7 @@ public class TableUtils {
 				Statement stmt = db.getConnection().createStatement();
 				stmt.execute(st.render());
 				stmt.close();
+				System.out.println("Created table: " + tableName);
 			} catch (SQLException e) {
 				e.printStackTrace();
 				System.out.println(e.getMessage());

@@ -10,13 +10,24 @@ import org.stringtemplate.v4.ST;
 
 import com.wb.paliver.SearchDbApi;
 import com.wb.paliver.data.SearchResult;
+import com.wb.paliver.db.DbImpl_DerbyEmbedded;
+import com.wb.paliver.db.DbImpl_MySql;
 
 public class SearchTable {
 
 	public final static String TABLE_NAME = "search";
 	
 	public static void createTable(SearchDbApi db) {
-		ST st = db.getInstanceOf("search_create");
+		ST st;
+		if (db.getDbType().equals(DbImpl_MySql.dbType)) {
+			st = db.getInstanceOf("search_create");
+		} else if (db.getDbType().equals(DbImpl_DerbyEmbedded.dbType)) {
+			st = db.getInstanceOf("search_create_derby");
+		} else {
+			// todo: handle this error case better
+			st = null;
+		}
+		
 		TableUtils.createTable(db, TABLE_NAME, st);
 	}
 	
@@ -35,10 +46,7 @@ public class SearchTable {
 			int i = 1;
 			try {
 				PreparedStatement stmt = db.getConnection().prepareStatement(st.render());
-				stmt.setString(i++, sr.subject);
 				stmt.setLong(i++, sr.subject_id);
-				stmt.setString(i++, sr.topic);
-				stmt.setLong(i++, sr.topic_id);
 				
 				stmt.setTimestamp(i++, sr.time);
 				stmt.setDouble(i++, sr.assoc);
@@ -86,11 +94,7 @@ public class SearchTable {
 				SearchResult sr = new SearchResult();
 				srList = new ArrayList<SearchResult>();
 				while (rs.next()) {							
-					sr.subject = rs.getString("subject");
 					sr.subject_id = rs.getLong("subject_id");
-					
-					sr.topic = rs.getString("topic");
-					sr.topic_id = rs.getLong("topic_id");
 					
 					sr.time = rs.getTimestamp("time");
 					sr.assoc = rs.getDouble("assoc"); 

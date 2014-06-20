@@ -10,13 +10,24 @@ import org.stringtemplate.v4.ST;
 
 import com.wb.paliver.SearchDbApi;
 import com.wb.paliver.data.SubjectInfo;
+import com.wb.paliver.db.DbImpl_DerbyEmbedded;
+import com.wb.paliver.db.DbImpl_MySql;
 
 public class SubjectTable {
 
 	public final static String TABLE_NAME = "subject";
 	
 	public static void createTable(SearchDbApi db) {
-		ST st = db.getInstanceOf("subject_create");
+		ST st;
+		if (db.getDbType().equals(DbImpl_MySql.dbType)) {
+			st = db.getInstanceOf("subject_create");
+		} else if (db.getDbType().equals(DbImpl_DerbyEmbedded.dbType)) {
+			st = db.getInstanceOf("subject_create_derby");
+		} else {
+			// todo: handle this error case better
+			st = null;
+		}
+		
 		TableUtils.createTable(db, TABLE_NAME, st);
 	}
 	
@@ -35,10 +46,10 @@ public class SubjectTable {
 			int i = 1;
 			try {
 				PreparedStatement stmt = db.getConnection().prepareStatement(st.render());
+				//stmt.setLong(i++, si.subject_id);
 				stmt.setString(i++, si.subject);
-				stmt.setLong(i++, si.subject_id);
-				
-				stmt.setString(i++, si.descrip);
+				stmt.setString(i++, si.info);
+				stmt.setLong(i++, si.topic_id);
 				
 				stmt.execute();
 				stmt.close();				
@@ -71,10 +82,11 @@ public class SubjectTable {
 				SubjectInfo si = new SubjectInfo();
 				siList = new ArrayList<SubjectInfo>();
 				while (rs.next()) {							
-					si.subject = rs.getString("subject");
 					si.subject_id = rs.getLong("subject_id");
+					si.subject = rs.getString("subject");
+					si.info = rs.getString("info");
 					
-					si.descrip = rs.getString("descrip");
+					si.topic_id = rs.getLong("topic_id");
 					
 					siList.add(si);
 				}

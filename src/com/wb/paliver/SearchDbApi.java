@@ -1,3 +1,9 @@
+/*******************************************************************************
+*
+* This API provides a convenient facade to the underlying worker classes and methods.
+*
+*******************************************************************************/
+
 package com.wb.paliver;
 
 
@@ -8,6 +14,7 @@ import org.stringtemplate.v4.STGroupDir;
 import com.wb.paliver.data.SearchResult;
 import com.wb.paliver.data.SubjectInfo;
 import com.wb.paliver.data.TopicInfo;
+import com.wb.paliver.db.DbImpl_DerbyEmbedded;
 import com.wb.paliver.db.DbImpl_MySql;
 import com.wb.paliver.db.DbInterface;
 import com.wb.paliver.db.tables.SearchTable;
@@ -20,12 +27,28 @@ import java.util.List;
 
 public class SearchDbApi {
 
-	DbInterface db = new DbImpl_MySql();
+	DbInterface db;
 	
 	STGroup stGroup;
 	public SearchDbApi() {
 		stGroup = new STGroupDir("templates");
+		
+		db = new DbImpl_DerbyEmbedded();
 	}
+	
+	public SearchDbApi(String dbType) {
+		stGroup = new STGroupDir("templates");
+		
+		// make this a factory class/method
+		if (dbType.equals(DbImpl_MySql.dbType)) {
+			db = new DbImpl_MySql();
+		} else if (dbType.equals(DbImpl_DerbyEmbedded.dbType)) {
+			db = new DbImpl_DerbyEmbedded();
+		} else {
+			System.out.println("Invalid Db type!");
+		}
+	}
+	
 	
 	public ST getInstanceOf(String template) {
 		return stGroup.getInstanceOf(template);
@@ -34,6 +57,15 @@ public class SearchDbApi {
 	// ---------------------------------------------------------------- //
 	// DbInterface methods
 	// ---------------------------------------------------------------- //
+	
+	public void createDb(String dbName) {
+		db.createDb(dbName);
+		
+		createSearchTable();
+		createSubjectTable();
+		createTopicTable();
+	}
+	
 	
 	public boolean openDb(String dbName) {
 		return db.openDb(dbName);
@@ -57,6 +89,10 @@ public class SearchDbApi {
 
 	public String[] showTables() {
 		return db.showTables();
+	}
+	
+	public String getDbType() {
+		return db.getDbType();
 	}
 	
 	// ---------------------------------------------------------------- //

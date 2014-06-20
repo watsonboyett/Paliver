@@ -1,9 +1,9 @@
 subject_insert() ::= <<
 INSERT INTO subject (
 	subject,
-	subject_id,
+	info,
 	
-	descrip
+	topic_id
 )
-VALUES (?,?,?);
+VALUES (?,?, ?)
 >>

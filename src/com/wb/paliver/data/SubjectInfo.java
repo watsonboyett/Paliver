@@ -5,19 +5,20 @@ import java.util.Random;
 
 public class SubjectInfo {
 	
-	public String subject = "";
 	public long subject_id = -1;
+	public String subject = "";
+	public String info = "";
 	
-	public String descrip = "";
-	
+	public long topic_id = -1;
 	
 	public boolean compareTo(SubjectInfo other) {
 		boolean isEqual = true;
 
+		//isEqual &= (this.subject_id == other.subject_id);
 		isEqual &= (this.subject == other.subject);
-		isEqual &= (this.subject_id == other.subject_id);
-
-		isEqual &= (this.descrip == other.descrip);
+		isEqual &= (this.info == other.info);
+		
+		isEqual &= (this.topic_id == other.topic_id);
 		
 		return isEqual;
 	}
@@ -26,9 +27,10 @@ public class SubjectInfo {
 		final Random random = new Random();
 		String tester = new BigInteger(64, random).toString();
 		
+		//this.subject_id = random.nextLong();
 		this.subject = tester;
-		this.subject_id = random.nextLong();
+		this.info = tester;
 		
-		this.descrip = tester;
+		this.topic_id = random.nextLong();
 	}
 }

@@ -1,7 +1,7 @@
-topic_create() ::= <<
+topic_create_derby() ::= <<
 CREATE TABLE topic
 (
-	topic_id BIGINT NOT NULL AUTO_INCREMENT,
+	topic_id BIGINT GENERATED ALWAYS AS IDENTITY,
 	topic VARCHAR (64),
 	info VARCHAR(512),
 

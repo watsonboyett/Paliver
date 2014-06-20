@@ -6,20 +6,23 @@ import com.wb.paliver.data.SearchResult;
 public class Paliver {
 
 	public static void main(String[] args) {
-		SearchDbApi db = new SearchDbApi();
+		SearchDbApi dbApi = new SearchDbApi();
 		
 		try {
-			db.openDb("//localhost/searchpop?user=root");
+			String dbType = "Derby"; 
+			String dbName;
 			
-			db.createSearchTable();
-			db.createSubjectTable();
-			db.createTopicTable();
+			if (dbType.equalsIgnoreCase("MySQL")) {
+				dbName = "//localhost/db_test?user=root";
+			} else {
+				dbName = "db_test";
+			}
 			
+			dbApi.createDb(dbName);
+
+			// do some stuff
 			
-			
-			
-			
-			db.closeDb();
+			dbApi.closeDb();
 		} catch (Exception ex) {
         	System.out.println(ex.getMessage());
         	ex.printStackTrace();
