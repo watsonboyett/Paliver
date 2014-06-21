@@ -2,15 +2,15 @@ package com.wb.paliver.db;
 
 import java.io.IOException;
 
-import com.wb.paliver.SearchDbApi;
-import com.wb.paliver.data.SearchResult;
+import com.wb.paliver.DbApi;
+import com.wb.paliver.data.SubjectData;
 import com.wb.paliver.data.SubjectInfo;
 import com.wb.paliver.data.TopicInfo;
 
 public class DbApiTest {
 
 	public static void main(String[] args) {
-		SearchDbApi dbApi = new SearchDbApi();
+		DbApi dbApi = new DbApi();
 		
 		try {
 			String dbType = "Derby"; 
@@ -25,17 +25,17 @@ public class DbApiTest {
 			
 			dbApi.createDb(dbName);
 
-			dbApi.createSearchTable();
+			dbApi.createSubjectDataTable();
 			testSearchTable(dbApi);
-			dbApi.dropSearchTable();
+			dbApi.dropSubjectDataTable();
 	
-			dbApi.createSubjectTable();
+			dbApi.createSubjectInfoTable();
 			testSubjectTable(dbApi);
-			dbApi.dropSubjectTable();
+			dbApi.dropSubjectInfoTable();
 			
-			dbApi.createTopicTable();
+			dbApi.createTopicInfoTable();
 			testTopicTable(dbApi);
-			dbApi.dropTopicTable();
+			dbApi.dropTopicInfoTable();
 			
 			dbApi.closeDb();
 		} catch (Exception ex) {
@@ -45,16 +45,16 @@ public class DbApiTest {
 	}
 	
 	
-	public static void testSearchTable(SearchDbApi dbApi) throws IOException, InterruptedException {
+	public static void testSearchTable(DbApi dbApi) throws IOException, InterruptedException {
 		System.out.println("Running Db write/read test on Search table...");
 				
 		int numRows = 100;
 		for (int i = 0; i < numRows; i++) {
-			SearchResult sr = new SearchResult();
+			SubjectData sr = new SubjectData();
 			sr.randomData();
 		
-			dbApi.saveSearchResult(sr);
-			SearchResult srFetch = dbApi.getSearchResult("select * from search where subject_id = " + sr.subject_id + " and time = '" + sr.time + "'");			
+			dbApi.saveSubjectData(sr);
+			SubjectData srFetch = dbApi.getSubjectData("select * from search where subject_id = " + sr.subject_id + " and time = '" + sr.time + "'");			
 			if (srFetch.compareTo(sr)) {
 				System.out.println("fetched result does not match inserted one.");
 				Thread.sleep(3000);
@@ -66,7 +66,7 @@ public class DbApiTest {
 		System.out.println("\nDone.");
 	}
 
-	public static void testSubjectTable(SearchDbApi dbApi) throws IOException, InterruptedException {
+	public static void testSubjectTable(DbApi dbApi) throws IOException, InterruptedException {
 		System.out.println("Running Db write/read test on Subject table...");
 				
 		int numRows = 100;
@@ -88,7 +88,7 @@ public class DbApiTest {
 		System.out.println("\nDone.");
 	}
 	
-	public static void testTopicTable(SearchDbApi dbApi) throws IOException, InterruptedException {
+	public static void testTopicTable(DbApi dbApi) throws IOException, InterruptedException {
 		System.out.println("Running Db write/read test of Topic table...");
 				
 		int numRows = 100;

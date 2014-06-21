@@ -1,5 +1,5 @@
-topic_create() ::= <<
-CREATE TABLE topic
+topicInfo_create() ::= <<
+CREATE TABLE topicInfo
 (
 	topic_id BIGINT NOT NULL AUTO_INCREMENT,
 	topic VARCHAR (64),

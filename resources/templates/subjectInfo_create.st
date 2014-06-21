@@ -1,7 +1,7 @@
-subject_create_derby() ::= <<
-CREATE TABLE subject
+subjectInfo_create() ::= <<
+CREATE TABLE subjectInfo
 (
-	subject_id BIGINT GENERATED ALWAYS AS IDENTITY,
+	subject_id BIGINT NOT NULL AUTO_INCREMENT,
 	subject VARCHAR (64),
 	info VARCHAR (512),
 

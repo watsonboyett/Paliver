@@ -8,44 +8,44 @@ import java.util.List;
 
 import org.stringtemplate.v4.ST;
 
-import com.wb.paliver.SearchDbApi;
-import com.wb.paliver.data.SearchResult;
+import com.wb.paliver.DbApi;
+import com.wb.paliver.data.SubjectData;
 import com.wb.paliver.db.DbImpl_DerbyEmbedded;
 import com.wb.paliver.db.DbImpl_MySql;
 
-public class SearchTable {
+public class SubjectDataTable {
 
-	public final static String TABLE_NAME = "search";
+	public final static String TABLE_NAME = "subjectData";
 	
-	public static void createTable(SearchDbApi db) {
+	public static void createTable(DbApi dbApi) {
 		ST st;
-		if (db.getDbType().equals(DbImpl_MySql.dbType)) {
-			st = db.getInstanceOf("search_create");
-		} else if (db.getDbType().equals(DbImpl_DerbyEmbedded.dbType)) {
-			st = db.getInstanceOf("search_create_derby");
+		if (dbApi.getDbType().equals(DbImpl_MySql.dbType)) {
+			st = dbApi.getInstanceOf(TABLE_NAME + "_create");
+		} else if (dbApi.getDbType().equals(DbImpl_DerbyEmbedded.dbType)) {
+			st = dbApi.getInstanceOf(TABLE_NAME + "_create_derby");
 		} else {
 			// todo: handle this error case better
 			st = null;
 		}
 		
-		TableUtils.createTable(db, TABLE_NAME, st);
+		TableUtils.createTable(dbApi, TABLE_NAME, st);
 	}
 	
-	public static void createIndexes(SearchDbApi db) {
+	public static void createIndexes(DbApi dbApi) {
 		
 	}
 	
-	public static void dropTable(SearchDbApi db) {
-		TableUtils.dropTable(db, TABLE_NAME);
+	public static void dropTable(DbApi dbApi) {
+		TableUtils.dropTable(dbApi, TABLE_NAME);
 	}
 	
-	public static void saveEntry(SearchDbApi db, SearchResult sr) {
-		if (db.isOpen()) {
-			ST st = db.getInstanceOf("search_insert");
+	public static void saveEntry(DbApi dbApi, SubjectData sr) {
+		if (dbApi.isOpen()) {
+			ST st = dbApi.getInstanceOf(TABLE_NAME + "_insert");
 			
 			int i = 1;
 			try {
-				PreparedStatement stmt = db.getConnection().prepareStatement(st.render());
+				PreparedStatement stmt = dbApi.getConnection().prepareStatement(st.render());
 				stmt.setLong(i++, sr.subject_id);
 				
 				stmt.setTimestamp(i++, sr.time);
@@ -72,9 +72,9 @@ public class SearchTable {
 		}		
 	}
 	
-	public static SearchResult getEntry(SearchDbApi db, String query) {		
-		SearchResult sr = null;
-		List<SearchResult> srList = getEntries(db, query);
+	public static SubjectData getEntry(DbApi dbApi, String query) {		
+		SubjectData sr = null;
+		List<SubjectData> srList = getEntries(dbApi, query);
 		if (srList != null) {
 			if (srList.size() > 1) {
 				System.out.println("More than one row was found! Returning first row only.");
@@ -84,15 +84,15 @@ public class SearchTable {
 		return sr;
 	}
 	
-	public static List<SearchResult> getEntries(SearchDbApi db, String query) {
-		List<SearchResult> srList = null;
-		if (db.isOpen()) {
+	public static List<SubjectData> getEntries(DbApi dbApi, String query) {
+		List<SubjectData> srList = null;
+		if (dbApi.isOpen()) {
 			try {
-				PreparedStatement stmt = db.getConnection().prepareStatement(query);
+				PreparedStatement stmt = dbApi.getConnection().prepareStatement(query);
 				ResultSet rs = stmt.executeQuery();
 				
-				SearchResult sr = new SearchResult();
-				srList = new ArrayList<SearchResult>();
+				SubjectData sr = new SubjectData();
+				srList = new ArrayList<SubjectData>();
 				while (rs.next()) {							
 					sr.subject_id = rs.getLong("subject_id");
 					

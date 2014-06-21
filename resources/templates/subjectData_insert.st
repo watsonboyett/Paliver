@@ -1,5 +1,5 @@
-search_insert() ::= <<
-INSERT INTO search (
+subjectData_insert() ::= <<
+INSERT INTO subjectData (
 	subject_id,
 
 	time,

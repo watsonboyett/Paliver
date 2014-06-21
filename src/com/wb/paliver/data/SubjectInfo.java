@@ -11,6 +11,7 @@ public class SubjectInfo {
 	
 	public long topic_id = -1;
 	
+	
 	public boolean compareTo(SubjectInfo other) {
 		boolean isEqual = true;
 

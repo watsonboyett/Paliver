@@ -3,9 +3,7 @@ package com.wb.paliver.data;
 import java.sql.Timestamp;
 import java.util.Random;
 
-public class SearchResult {
-	
-	public long search_id = -1;
+public class SubjectData {
 	
 	public long subject_id = -1;
 
@@ -25,8 +23,7 @@ public class SearchResult {
 	public double demean = -1;
 	
 	
-	
-	public boolean compareTo(SearchResult other) {
+	public boolean compareTo(SubjectData other) {
 		boolean isEqual = true;
 				
 		isEqual &= (this.subject_id == other.subject_id);

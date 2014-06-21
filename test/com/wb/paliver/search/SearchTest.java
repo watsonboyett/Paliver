@@ -9,7 +9,7 @@ public class SearchTest {
 		
 		int test = -1;
 		try {
-			test = searchApi.getHitCount("test");
+			test = searchApi.getPageCount("test");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -8,44 +8,44 @@ import java.util.List;
 
 import org.stringtemplate.v4.ST;
 
-import com.wb.paliver.SearchDbApi;
+import com.wb.paliver.DbApi;
 import com.wb.paliver.data.SubjectInfo;
 import com.wb.paliver.db.DbImpl_DerbyEmbedded;
 import com.wb.paliver.db.DbImpl_MySql;
 
-public class SubjectTable {
+public class SubjectInfoTable {
 
-	public final static String TABLE_NAME = "subject";
+	public final static String TABLE_NAME = "subjectInfo";
 	
-	public static void createTable(SearchDbApi db) {
+	public static void createTable(DbApi dbApi) {
 		ST st;
-		if (db.getDbType().equals(DbImpl_MySql.dbType)) {
-			st = db.getInstanceOf("subject_create");
-		} else if (db.getDbType().equals(DbImpl_DerbyEmbedded.dbType)) {
-			st = db.getInstanceOf("subject_create_derby");
+		if (dbApi.getDbType().equals(DbImpl_MySql.dbType)) {
+			st = dbApi.getInstanceOf(TABLE_NAME + "_create");
+		} else if (dbApi.getDbType().equals(DbImpl_DerbyEmbedded.dbType)) {
+			st = dbApi.getInstanceOf(TABLE_NAME + "_create_derby");
 		} else {
 			// todo: handle this error case better
 			st = null;
 		}
 		
-		TableUtils.createTable(db, TABLE_NAME, st);
+		TableUtils.createTable(dbApi, TABLE_NAME, st);
 	}
 	
-	public static void createIndexes(SearchDbApi db) {
+	public static void createIndexes(DbApi dbApi) {
 		
 	}
 	
-	public static void dropTable(SearchDbApi db) {
-		TableUtils.dropTable(db, TABLE_NAME);
+	public static void dropTable(DbApi dbApi) {
+		TableUtils.dropTable(dbApi, TABLE_NAME);
 	}
 	
-	public static void saveEntry(SearchDbApi db, SubjectInfo si) {
-		if (db.isOpen()) {
-			ST st = db.getInstanceOf("subject_insert");
+	public static void saveEntry(DbApi dbApi, SubjectInfo si) {
+		if (dbApi.isOpen()) {
+			ST st = dbApi.getInstanceOf(TABLE_NAME + "_insert");
 			
 			int i = 1;
 			try {
-				PreparedStatement stmt = db.getConnection().prepareStatement(st.render());
+				PreparedStatement stmt = dbApi.getConnection().prepareStatement(st.render());
 				//stmt.setLong(i++, si.subject_id);
 				stmt.setString(i++, si.subject);
 				stmt.setString(i++, si.info);
@@ -60,9 +60,9 @@ public class SubjectTable {
 		}		
 	}
 	
-	public static SubjectInfo getEntry(SearchDbApi db, String query) {		
+	public static SubjectInfo getEntry(DbApi dbApi, String query) {		
 		SubjectInfo si = null;
-		List<SubjectInfo> srList = getEntries(db, query);
+		List<SubjectInfo> srList = getEntries(dbApi, query);
 		if (srList != null) {
 			if (srList.size() > 1) {
 				System.out.println("More than one row was found! Returning first row only.");
@@ -72,11 +72,11 @@ public class SubjectTable {
 		return si;
 	}
 	
-	public static List<SubjectInfo> getEntries(SearchDbApi db, String query) {
+	public static List<SubjectInfo> getEntries(DbApi dbApi, String query) {
 		List<SubjectInfo> siList = null;
-		if (db.isOpen()) {
+		if (dbApi.isOpen()) {
 			try {
-				PreparedStatement stmt = db.getConnection().prepareStatement(query);
+				PreparedStatement stmt = dbApi.getConnection().prepareStatement(query);
 				ResultSet rs = stmt.executeQuery();
 				
 				SubjectInfo si = new SubjectInfo();

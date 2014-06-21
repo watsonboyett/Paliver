@@ -1,12 +1,12 @@
 package com.wb.paliver;
 
 
-import com.wb.paliver.data.SearchResult;
+import com.wb.paliver.data.SubjectData;
 
 public class Paliver {
 
 	public static void main(String[] args) {
-		SearchDbApi dbApi = new SearchDbApi();
+		DbApi dbApi = new DbApi();
 		
 		try {
 			String dbType = "Derby"; 

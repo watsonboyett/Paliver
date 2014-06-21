@@ -1,7 +1,7 @@
-search_create() ::= <<
-CREATE TABLE search
+subjectData_create_derby() ::= <<
+CREATE TABLE subjectData
 (
-	search_id BIGINT NOT NULL AUTO_INCREMENT,
+	search_id BIGINT GENERATED ALWAYS AS IDENTITY,
 	subject_id BIGINT NOT NULL,
 
 	time TIMESTAMP,

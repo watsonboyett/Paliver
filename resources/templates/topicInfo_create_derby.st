@@ -1,5 +1,5 @@
-topic_create_derby() ::= <<
-CREATE TABLE topic
+topicInfo_create_derby() ::= <<
+CREATE TABLE topicInfo
 (
 	topic_id BIGINT GENERATED ALWAYS AS IDENTITY,
 	topic VARCHAR (64),

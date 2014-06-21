@@ -5,13 +5,13 @@ import java.sql.Statement;
 
 import org.stringtemplate.v4.ST;
 
-import com.wb.paliver.SearchDbApi;
+import com.wb.paliver.DbApi;
 
 public class TableUtils {
 
-	public static void createTable(SearchDbApi db, String tableName, ST st) {
-		if (db.isOpen()) {
-			String[] tables = db.showTables();
+	public static void createTable(DbApi dbApi, String tableName, ST st) {
+		if (dbApi.isOpen()) {
+			String[] tables = dbApi.showTables();
 			for (int i = 0; i < tables.length; i++) {
 				int match = tables[i].compareToIgnoreCase(tableName);
 				if (match == 0) {
@@ -21,7 +21,7 @@ public class TableUtils {
 			}
 			
 			try {
-				Statement stmt = db.getConnection().createStatement();
+				Statement stmt = dbApi.getConnection().createStatement();
 				stmt.execute(st.render());
 				stmt.close();
 				System.out.println("Created table: " + tableName);
@@ -32,14 +32,14 @@ public class TableUtils {
 		}
 	}
 	
-	public static void createIndexes(SearchDbApi db) {
+	public static void createIndexes(DbApi dbApi) {
 		
 	}
 	
-	public static void dropTable(SearchDbApi db, String tableName) {
-		if (db.isOpen()) {
+	public static void dropTable(DbApi dbApi, String tableName) {
+		if (dbApi.isOpen()) {
 			boolean foundTable = false;
-			String[] tables = db.showTables();
+			String[] tables = dbApi.showTables();
 			for (int i = 0; i < tables.length; i++) {
 				int match = tables[i].compareToIgnoreCase(tableName);
 				if (match == 0) {
@@ -53,7 +53,7 @@ public class TableUtils {
 			}
 			
 			try {
-				Statement stmt = db.getConnection().createStatement();
+				Statement stmt = dbApi.getConnection().createStatement();
 				stmt.execute("drop table " + tableName);
 				stmt.close();
 			} catch (SQLException e) {

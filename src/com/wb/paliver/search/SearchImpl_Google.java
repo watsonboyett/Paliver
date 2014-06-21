@@ -10,15 +10,28 @@ import java.util.regex.Pattern;
 
 public class SearchImpl_Google implements SearchInterface {
 
+	public static final String searchType = "Google";
+	
+	// URL parts that make up the full search url
+	private String urlBase = "http://www.google.com";
+	private String urlSearchSuffix = "/search?q=";
+	
+	// the regex pattern to search for in the HTML results string
+	private String pageCountPattern = "id=\"resultStats\">About (.*?) results";
+	
+	private String userAgent = "Mozilla/5.0 (X11; U; Linux x86_64; en-GB; rv:1.8.1.6) Gecko/20070723 Iceweasel/2.0.0.6 (Debian-2.0.0.6-0etch1)";
+	
+	
 	@Override
 	public String getPage(String query) throws IOException {
-		String urlName = "http://www.google.com/search?q=\"" + query + "\"";
-        URL url = new URL(urlName);
+		// open connection to full URL and get returned page
+		String urlFull = urlBase + urlSearchSuffix + "\"" + query + "\"";
+        URL url = new URL(urlFull);
         URLConnection conn = url.openConnection();
-        conn.setRequestProperty("User-Agent",
-                "Mozilla/5.0 (X11; U; Linux x86_64; en-GB; rv:1.8.1.6) Gecko/20070723 Iceweasel/2.0.0.6 (Debian-2.0.0.6-0etch1)");
+        conn.setRequestProperty("User-Agent", userAgent);
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         
+        // save returned page into a string
         String page = "";
         String line;
         while ((line = in.readLine()) != null) {
@@ -30,19 +43,24 @@ public class SearchImpl_Google implements SearchInterface {
         return page;
 	}
 	
-	public int getHitCount(String query) throws IOException {
+	public int getPageCount(String query) throws IOException {
 		String page = getPage(query);
 
-        Pattern pattern = Pattern.compile("id=\"resultStats\">About (.*?) results"); //About 1,620,000 results
+		// attempt to find page count pattern in html page
+        Pattern pattern = Pattern.compile(pageCountPattern);
         Matcher m = pattern.matcher(page);
         String pageCountStr = "";
         if (m.find()) {
-        	pageCountStr = m.group(1);  // m.group(1) corresponds to results number: i.e.: 1,620,000
+        	pageCountStr = m.group(1);
             //System.out.println(result); 
         }
-        pageCountStr = pageCountStr.replace(",", "");
-        int pageCount = Integer.parseInt(pageCountStr);
-
+        
+        int pageCount = 0;
+        if (!pageCountStr.isEmpty()) {
+	        pageCountStr = pageCountStr.replace(",", "");
+	        pageCount = Integer.parseInt(pageCountStr);
+        }
+        
         return pageCount;
 	}
 
