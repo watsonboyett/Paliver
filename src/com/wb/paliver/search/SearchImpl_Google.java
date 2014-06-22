@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,7 @@ public class SearchImpl_Google implements SearchInterface {
 	
 	// URL parts that make up the full search url
 	private String urlBase = "http://www.google.com";
-	private String urlSearchSuffix = "/search?q=";
+	private String urlSearchSuffix = "/search?";
 	
 	// the regex pattern to search for in the HTML results string
 	private String pageCountPattern = "id=\"resultStats\">About (.*?) results";
@@ -25,8 +26,11 @@ public class SearchImpl_Google implements SearchInterface {
 	@Override
 	public String getPage(String query) throws IOException {
 		// open connection to full URL and get returned page
-		String urlFull = urlBase + urlSearchSuffix + "\"" + query + "\"";
-        URL url = new URL(urlFull);
+		String urlFull = urlBase;
+		urlFull += urlSearchSuffix;
+		urlFull += "q=" + URLEncoder.encode(query, "UTF-8");
+		
+		URL url = new URL(urlFull);
         URLConnection conn = url.openConnection();
         conn.setRequestProperty("User-Agent", userAgent);
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -58,7 +62,11 @@ public class SearchImpl_Google implements SearchInterface {
         int pageCount = 0;
         if (!pageCountStr.isEmpty()) {
 	        pageCountStr = pageCountStr.replace(",", "");
+	        try {
 	        pageCount = Integer.parseInt(pageCountStr);
+	        } catch (NumberFormatException e) {
+	        	e.printStackTrace();
+	        }
         }
         
         return pageCount;

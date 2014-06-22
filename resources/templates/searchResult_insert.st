@@ -1,11 +1,10 @@
 searchResult_insert() ::= <<
 INSERT INTO searchResult (
-(
-	query VARCHAR (512) NOT NULL,
-	time TIMESTAMP,
+	query,
+	time,
 	
-	subject_id BIGINT,
-	pageCount BIGINT
+	subject_id,
+	pageCount
 )
 VALUES (?,?, ?,?)
 >>

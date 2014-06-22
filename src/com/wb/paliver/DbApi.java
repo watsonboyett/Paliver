@@ -11,12 +11,14 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupDir;
 
+import com.wb.paliver.data.SearchResult;
 import com.wb.paliver.data.SubjectData;
 import com.wb.paliver.data.SubjectInfo;
 import com.wb.paliver.data.TopicInfo;
 import com.wb.paliver.db.DbImpl_DerbyEmbedded;
 import com.wb.paliver.db.DbImpl_MySql;
 import com.wb.paliver.db.DbInterface;
+import com.wb.paliver.db.tables.SearchResultTable;
 import com.wb.paliver.db.tables.SubjectDataTable;
 import com.wb.paliver.db.tables.SubjectInfoTable;
 import com.wb.paliver.db.tables.TopicInfoTable;
@@ -61,6 +63,7 @@ public class DbApi {
 	public void createDb(String dbName) {
 		db.createDb(dbName);
 		
+		createSearchResultTable();
 		createSubjectDataTable();
 		createSubjectInfoTable();
 		createTopicInfoTable();
@@ -93,6 +96,34 @@ public class DbApi {
 	
 	public String getDbType() {
 		return db.getDbType();
+	}
+
+	// ---------------------------------------------------------------- //
+	// SearchResultTable method wrappers
+	// ---------------------------------------------------------------- //
+	
+	public void createSearchResultTable() {
+		SearchResultTable.createTable(this);
+	}
+
+	public void createSearchResultTableIndexes() {
+		SearchResultTable.createIndexes(this);
+	}
+	
+	public void dropSearchResultTable() {
+		SearchResultTable.dropTable(this);
+	}
+	
+	public void saveSearchResult(SearchResult sr) {
+		SearchResultTable.saveEntry(this, sr);
+	}
+	
+	public SearchResult getSearchResult(String query) {
+		return SearchResultTable.getEntry(this, query);
+	}
+	
+	public List<SearchResult> getSearchResultList(String query) {
+		return SearchResultTable.getEntries(this, query);
 	}
 	
 	// ---------------------------------------------------------------- //

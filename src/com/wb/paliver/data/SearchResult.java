@@ -1,5 +1,6 @@
-package com.wb.paliver.search;
+package com.wb.paliver.data;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Random;
 
@@ -29,10 +30,12 @@ public class SearchResult {
 	
 	public void randomData() {
 		final Random random = new Random();
+		String tester = new BigInteger(64, random).toString();
+		
+		this.query = tester;
+		this.time = new Timestamp(System.currentTimeMillis());
 		
 		this.subject_id = random.nextLong();
-		
-		this.time = new Timestamp(System.currentTimeMillis());
-
+		this.pageCount = random.nextLong();
 	}
 }

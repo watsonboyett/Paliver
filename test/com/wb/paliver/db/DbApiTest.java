@@ -3,6 +3,7 @@ package com.wb.paliver.db;
 import java.io.IOException;
 
 import com.wb.paliver.DbApi;
+import com.wb.paliver.data.SearchResult;
 import com.wb.paliver.data.SubjectData;
 import com.wb.paliver.data.SubjectInfo;
 import com.wb.paliver.data.TopicInfo;
@@ -25,8 +26,12 @@ public class DbApiTest {
 			
 			dbApi.createDb(dbName);
 
+			dbApi.createSearchResultTable();
+			testSearchResultTable(dbApi);
+			dbApi.dropSearchResultTable();
+			
 			dbApi.createSubjectDataTable();
-			testSearchTable(dbApi);
+			testSubjectDataTable(dbApi);
 			dbApi.dropSubjectDataTable();
 	
 			dbApi.createSubjectInfoTable();
@@ -45,17 +50,38 @@ public class DbApiTest {
 	}
 	
 	
-	public static void testSearchTable(DbApi dbApi) throws IOException, InterruptedException {
-		System.out.println("Running Db write/read test on Search table...");
+	public static void testSearchResultTable(DbApi dbApi) throws IOException, InterruptedException {
+		System.out.println("Running Db write/read test on searchResult table...");
 				
 		int numRows = 100;
 		for (int i = 0; i < numRows; i++) {
-			SubjectData sr = new SubjectData();
+			SearchResult sr = new SearchResult();
 			sr.randomData();
 		
-			dbApi.saveSubjectData(sr);
-			SubjectData srFetch = dbApi.getSubjectData("select * from search where subject_id = " + sr.subject_id + " and time = '" + sr.time + "'");			
+			dbApi.saveSearchResult(sr);
+			SearchResult srFetch = dbApi.getSearchResult("select * from searchResult where query = '" + sr.query + "' and time = '" + sr.time + "'");			
 			if (srFetch.compareTo(sr)) {
+				System.out.println("fetched result does not match inserted one.");
+				Thread.sleep(3000);
+			}
+			
+			System.out.print("\r progress: " + (i/(float)numRows) * 100 + "%");
+		}
+		
+		System.out.println("\nDone.");
+	}
+	
+	public static void testSubjectDataTable(DbApi dbApi) throws IOException, InterruptedException {
+		System.out.println("Running Db write/read test on subjectData table...");
+				
+		int numRows = 100;
+		for (int i = 0; i < numRows; i++) {
+			SubjectData sd = new SubjectData();
+			sd.randomData();
+		
+			dbApi.saveSubjectData(sd);
+			SubjectData srFetch = dbApi.getSubjectData("select * from subjectData where subject_id = " + sd.subject_id + " and time = '" + sd.time + "'");			
+			if (srFetch.compareTo(sd)) {
 				System.out.println("fetched result does not match inserted one.");
 				Thread.sleep(3000);
 			}
@@ -67,7 +93,7 @@ public class DbApiTest {
 	}
 
 	public static void testSubjectTable(DbApi dbApi) throws IOException, InterruptedException {
-		System.out.println("Running Db write/read test on Subject table...");
+		System.out.println("Running Db write/read test on subjectInfo table...");
 				
 		int numRows = 100;
 		for (int i = 0; i < numRows; i++) {
@@ -75,7 +101,7 @@ public class DbApiTest {
 			si.randomData();
 
 			dbApi.saveSubjectInfo(si);
-			SubjectInfo siFetch = dbApi.getSubjectInfo("select * from subject where subject = '" + si.subject + "'");			
+			SubjectInfo siFetch = dbApi.getSubjectInfo("select * from subjectInfo where subject = '" + si.subject + "'");			
 			if (siFetch.compareTo(si)) {
 				System.out.println("fetched result does not match inserted one.");
 				Thread.sleep(3000);
@@ -89,7 +115,7 @@ public class DbApiTest {
 	}
 	
 	public static void testTopicTable(DbApi dbApi) throws IOException, InterruptedException {
-		System.out.println("Running Db write/read test of Topic table...");
+		System.out.println("Running Db write/read test of topicInfo table...");
 				
 		int numRows = 100;
 		for (int i = 0; i < numRows; i++) {
@@ -97,7 +123,7 @@ public class DbApiTest {
 			ti.randomData();
 		
 			dbApi.saveTopicInfo(ti);
-			TopicInfo tiFetch = dbApi.getTopicInfo("select * from topic where topic = '" + ti.topic + "'");			
+			TopicInfo tiFetch = dbApi.getTopicInfo("select * from topicInfo where topic = '" + ti.topic + "'");			
 			if (tiFetch.compareTo(ti)) {
 				System.out.println("fetched result does not match inserted one.");
 				Thread.sleep(3000);

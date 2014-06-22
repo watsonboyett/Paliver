@@ -9,9 +9,9 @@ import java.util.List;
 import org.stringtemplate.v4.ST;
 
 import com.wb.paliver.DbApi;
+import com.wb.paliver.data.SearchResult;
 import com.wb.paliver.db.DbImpl_DerbyEmbedded;
 import com.wb.paliver.db.DbImpl_MySql;
-import com.wb.paliver.search.SearchResult;
 
 public class SearchResultTable {
 
