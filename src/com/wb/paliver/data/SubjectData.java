@@ -22,31 +22,22 @@ public class SubjectData {
 	public double evil = -1;
 	public double demean = -1;
 
+	private DataStrategy dataStrategy = new DataStrategy_Log();
+
 	
 	public void updateAmbiv() {
-		if (love > 0 && hate > 0) {
-			ambiv = Math.log(love / hate);
-		} else {
-			ambiv = 0;
-		}
+		ambiv = dataStrategy.execute(love, hate);
 	}
-
+	
 	public void updateSubsist() {
-		if (want > 0 && need > 0) {
-			subsist = Math.log(want / need);
-		} else {
-			subsist = 0;
-		}
+		subsist = dataStrategy.execute(want, need);
 	}
-
+	
 	public void updateDemean() {
-		if (good > 0 && evil > 0) {
-			demean = Math.log(good / evil);
-		} else {
-			demean = 0;
-		}
+		demean = dataStrategy.execute(good, evil);
 	}
 
+	
 	public boolean compareTo(SubjectData other) {
 		boolean isEqual = true;
 
