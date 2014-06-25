@@ -1,8 +1,23 @@
-/*******************************************************************************
- *
- * This API provides a convenient facade to the underlying worker classes and methods.
- *
- *******************************************************************************/
+/******************************************************************************
+*
+* This API provides a convenient facade to the underlying database functionality.
+*
+* Copyright (C) 2014  Paliver
+* 
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*   
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software Foundation,
+* Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+******************************************************************************/
 
 package com.wb.paliver;
 
@@ -42,8 +57,10 @@ public class DbApi {
 
 	/**
 	 * Overloaded constructor for the Database API
-	 *
-	 * @param dbType - a string representing the desired backing database (e.g. MySql, Derby, etc.)
+	 * 
+	 * @param dbType
+	 *            - a string representing the desired backing database (e.g.
+	 *            MySql, Derby, etc.)
 	 */
 	public DbApi(String dbType) {
 		stGroup = new STGroupDir("templates");
@@ -58,7 +75,6 @@ public class DbApi {
 		}
 	}
 
-	
 	public ST getInstanceOf(String template) {
 		return stGroup.getInstanceOf(template);
 	}
@@ -69,8 +85,9 @@ public class DbApi {
 
 	/**
 	 * Create a new database
-	 *
-	 * @param dbName - a string representing the name of the database to be create
+	 * 
+	 * @param dbName
+	 *            - a string representing the name of the database to be create
 	 */
 	public void createDb(String dbName) {
 		db.createDb(dbName);
@@ -83,8 +100,9 @@ public class DbApi {
 
 	/**
 	 * Open an existing database
-	 *
-	 * @param dbName - a string representing the name of the database to be opened
+	 * 
+	 * @param dbName
+	 *            - a string representing the name of the database to be opened
 	 * @return True if the database successfully opened
 	 */
 	public boolean openDb(String dbName) {
@@ -93,7 +111,7 @@ public class DbApi {
 
 	/**
 	 * Close an open database connection
-	 *
+	 * 
 	 * @return True if the connection successfully closed
 	 */
 	public boolean closeDb() {
@@ -102,7 +120,7 @@ public class DbApi {
 
 	/**
 	 * Determine if a database connection is already open
-	 *
+	 * 
 	 * @return True if the connection is open
 	 */
 	public boolean isOpen() {
@@ -111,8 +129,9 @@ public class DbApi {
 
 	/**
 	 * Gets the HTML page for the provided query
-	 *
-	 * @param query - a string representing the desired search query
+	 * 
+	 * @param query
+	 *            - a string representing the desired search query
 	 * @return A string containing the HTML of the query result
 	 */
 	public Connection getConnection() {
