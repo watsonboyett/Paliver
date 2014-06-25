@@ -8,7 +8,7 @@ public class SearchTest {
 		SearchInterface searchApi = new SearchImpl_Google();
 
 		String query = "test";
-		int pageCount = -1;
+		long pageCount = -1;
 		try {
 			pageCount = searchApi.getPageCount(query);
 		} catch (IOException e) {

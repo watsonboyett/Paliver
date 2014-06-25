@@ -2,7 +2,7 @@ package com.wb.paliver;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-
+import java.text.SimpleDateFormat;
 import com.wb.paliver.data.SearchResult;
 import com.wb.paliver.data.SubjectData;
 import com.wb.paliver.data.SubjectInfo;
@@ -10,25 +10,23 @@ import com.wb.paliver.data.SubjectInfo;
 public class Paliver {
 
 	public static void main(String[] args) {
-		DbApi dbApi = new DbApi();
-		SearchApi searchApi = new SearchApi();
-
 		try {
-			String dbType = "Derby";
+			String dbType = "DerbyEmbedded";
+			String searchType = "Random";
+			DbApi dbApi = new DbApi(dbType);
+			SearchApi searchApi = new SearchApi(searchType);
+
+			
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
+			String timestampStr = dateFormat.format(timestamp);
 			String dbName;
-
-			if (dbType.equalsIgnoreCase("MySQL")) {
-				dbName = "//localhost/db_test?user=root";
-			} else {
-				dbName = "db_test";
-			}
-
+			// dbName = "//localhost/db_test?user=root";
+			dbName = "F:/github/Paliver/data/DbTest_" + timestampStr;
 			dbApi.createDb(dbName);
 
-			String[] subjects = { "god", "satan", "atheists", "girls", "boys",
-					"pirates", "ninjas", "zombies", "wizards", "ghosts",
-					"dragons", "science", "math", "books", "gym", "english",
-					"history", "reading" };
+			
+			String[] subjects = PaliverSubjects.Subjects;
 
 			for (int subjectIter = 0; subjectIter < subjects.length; subjectIter++) {
 				String subjectCurr = subjects[subjectIter];
@@ -61,7 +59,7 @@ public class Paliver {
 					query = "\"" + query + "\"";
 					
 					
-					int pageCount = -1;
+					long pageCount = -1;
 					try {
 						pageCount = searchApi.getPageCount(query);
 					} catch (IOException e) {
@@ -99,8 +97,8 @@ public class Paliver {
 							break;
 					}
 
-					System.out.println("Hit count: " + pageCount);
-					Thread.sleep(1000);
+					System.out.println("Query:" + query + " | Hit count: " + pageCount);
+					//Thread.sleep(2000);
 				}
 
 				sd.updateAmbiv();

@@ -2,6 +2,7 @@ package com.wb.paliver.search;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -20,8 +21,8 @@ public class SearchImpl_Google implements SearchInterface {
 	// the regex pattern to search for in the HTML results string
 	private String pageCountPattern = "id=\"resultStats\">About (.*?) results";
 	
-	private String userAgent = "Mozilla/5.0 (X11; U; Linux x86_64; en-GB; rv:1.8.1.6) Gecko/20070723 Iceweasel/2.0.0.6 (Debian-2.0.0.6-0etch1)";
-	
+	//private String userAgent = "Mozilla/5.0 (X11; U; Linux x86_64; en-GB; rv:1.8.1.6) Gecko/20070723 Iceweasel/2.0.0.6 (Debian-2.0.0.6-0etch1)";
+	private String userAgent = "Mozilla/5.0 (X11; U; Linux x86_64; en-GB; rv:1.8.1.6)";
 	
 	@Override
 	public String getPage(String query) throws IOException {
@@ -30,15 +31,22 @@ public class SearchImpl_Google implements SearchInterface {
 		urlFull += urlSearchSuffix;
 		urlFull += "q=" + URLEncoder.encode(query, "UTF-8");
 		
-		URL url = new URL(urlFull);
-        URLConnection conn = url.openConnection();
-        conn.setRequestProperty("User-Agent", userAgent);
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        
+		BufferedReader in = null;
+		try {
+			URL url = new URL(urlFull);
+			URLConnection conn = url.openConnection();
+			conn.setRequestProperty("User-Agent", userAgent);
+			conn.connect();
+			InputStream inStream = conn.getInputStream();
+			in = new BufferedReader(new InputStreamReader(inStream));
+		} catch (IOException e) {
+			e.getMessage();
+		}
+		
         // save returned page into a string
         String page = "";
         String line;
-        while ((line = in.readLine()) != null) {
+        while ((in != null) && (line = in.readLine()) != null) {
         	page = page + line;
         }
         in.close();
@@ -47,7 +55,7 @@ public class SearchImpl_Google implements SearchInterface {
         return page;
 	}
 	
-	public int getPageCount(String query) throws IOException {
+	public long getPageCount(String query) throws IOException {
 		String page = getPage(query);
 
 		// attempt to find page count pattern in html page
@@ -59,11 +67,11 @@ public class SearchImpl_Google implements SearchInterface {
             //System.out.println(result); 
         }
         
-        int pageCount = 0;
+        long pageCount = 0;
         if (!pageCountStr.isEmpty()) {
 	        pageCountStr = pageCountStr.replace(",", "");
 	        try {
-	        pageCount = Integer.parseInt(pageCountStr);
+	        pageCount = Long.parseLong(pageCountStr);
 	        } catch (NumberFormatException e) {
 	        	e.printStackTrace();
 	        }

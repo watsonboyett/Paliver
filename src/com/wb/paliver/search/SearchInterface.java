@@ -18,5 +18,5 @@ public interface SearchInterface {
 	 * @param query - a string representing the desired search query
 	 * @return The number of results pages for the query
 	 */
-	public int getPageCount(String query) throws IOException;
+	public long getPageCount(String query) throws IOException;
 }
