@@ -1,23 +1,23 @@
 /******************************************************************************
-*
-* This API provides a convenient facade to the underlying database functionality.
-*
-* Copyright (C) 2014  Paliver
-* 
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*   
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software Foundation,
-* Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-******************************************************************************/
+ *
+ * This API provides a convenient facade to the underlying database functionality.
+ *
+ * Copyright (C) 2014  Paliver
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *   
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ ******************************************************************************/
 
 package com.wb.paliver;
 
@@ -75,6 +75,12 @@ public class DbApi {
 		}
 	}
 
+	/**
+	 * Get the desired string template
+	 * 
+	 * @param template
+	 *            - a string of the name of the desired template
+	 */
 	public ST getInstanceOf(String template) {
 		return stGroup.getInstanceOf(template);
 	}
@@ -128,11 +134,9 @@ public class DbApi {
 	}
 
 	/**
-	 * Gets the HTML page for the provided query
+	 * Gets the current database connect
 	 * 
-	 * @param query
-	 *            - a string representing the desired search query
-	 * @return A string containing the HTML of the query result
+	 * @return The connection to the current database (if open; otherwise, null)
 	 */
 	public Connection getConnection() {
 		Connection conn = null;
@@ -142,10 +146,20 @@ public class DbApi {
 		return conn;
 	}
 
+	/**
+	 * Gets the list of table names in the database
+	 * 
+	 * @return A string array containing the names of all tables
+	 */
 	public String[] showTables() {
 		return db.showTables();
 	}
 
+	/**
+	 * Gets the type of the current database implementation
+	 * 
+	 * @return A string containing the database type
+	 */
 	public String getDbType() {
 		return db.getDbType();
 	}

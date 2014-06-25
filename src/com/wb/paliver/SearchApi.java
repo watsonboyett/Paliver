@@ -32,11 +32,21 @@ public class SearchApi {
 
 	SearchInterface si;
 	
+	/**
+	 * Default constructor for the Search API
+	 */
 	public SearchApi() {
 		
 		si = new SearchImpl_Google();
 	}
 	
+	/**
+	 * Overloaded constructor for the Search API
+	 * 
+	 * @param searchType
+	 *            - a string representing the desired backing search engine (e.g.
+	 *            Google, Bing, Twitter, etc.)
+	 */
 	public SearchApi(String searchType) {
 		
 		// TODO: make this a factory class/method
