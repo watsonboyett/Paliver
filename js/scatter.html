@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
+<!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
+
+<style>
+body {
+  font: 11px sans-serif;
+}
+
+svg {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<select id="xAxisClass" onchange="updatePlot()"></select>
+<select id="yAxisClass" onchange="updatePlot()"></select>
+<select id="sAxisClass" onchange="updatePlot()"></select>
+<select id="cAxisClass" onchange="updatePlot()"></select>
+<br/>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+   width = 840 - margin.left - margin.right,
+   height = 560 - margin.top - margin.bottom;
+
+/* 
+ * value accessor - returns the value to encode for a given data object.
+ * scale - maps value to a visual display encoding, such as a pixel position.
+ * map function - maps from data value to display value
+ * axis - sets up axis
+ */ 
+
+var x = d3.scale.linear()
+    .domain([0, width])
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .domain([0, height])
+    .range([0, height]);
+    
+// setup x 
+var xValue = function(d) { return d.x;}, // data -> value
+   xScale = d3.scale.linear().range([0, width]), // value -> display
+   xMap = function(d) { return xScale(xValue(d));}, // data -> display
+   xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// setup y
+var yValue = function(d) { return d.y;}, // data -> value
+   yScale = d3.scale.linear().range([height, 0]), // value -> display
+   yMap = function(d) { return yScale(yValue(d));}, // data -> display
+   yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// setup dot size
+var sValue = function(d) { return d.s;},
+   sScale = d3.scale.linear().range([2, 20]),
+   sMap = function(d) { return sScale(sValue(d)); };
+    
+// setup fill color
+var cValue = function(d) { return d.c;},
+   color = d3.scale.category10();
+
+// add the graph canvas to the body of the webpage
+var svg = d3.select("body").append("svg")
+   .attr("width", width + margin.left + margin.right)
+   .attr("height", height + margin.top + margin.bottom)
+   .append("g")
+   //.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+   .call(d3.behavior.zoom().x(x).y(y).scaleExtent([0.5, 10]).on("zoom", zoom));
+    
+// add the tooltip area to the webpage
+var tooltip = d3.select("body").append("div")
+   .attr("class", "tooltip")
+   .style("opacity", 0);
+
+var g_data = [];
+    
+function createPlot (data) {
+
+   var classKeys = Object.keys(data[0]);
+   //console.log(classKeys);
+   var xAxisElem = document.getElementById("xAxisClass");
+   var yAxisElem = document.getElementById("yAxisClass");
+   var sAxisElem = document.getElementById("sAxisClass");
+   var cAxisElem = document.getElementById("cAxisClass");
+   classKeys.forEach( function(s) {
+      var option = document.createElement("option");
+      option.text = s;
+      xAxisElem.add(option);
+      
+      var option = document.createElement("option");
+      option.text = s;
+      yAxisElem.add(option);
+      
+      var option = document.createElement("option");
+      option.text = s;
+      sAxisElem.add(option);
+      
+      var option = document.createElement("option");
+      option.text = s;
+      cAxisElem.add(option);
+   });
+   xAxisElem.selectedIndex = 5;
+   yAxisElem.selectedIndex = 8;
+   sAxisElem.selectedIndex = 2;
+   cAxisElem.selectedIndex = 14;
+   
+   // change string (from CSV) into number format
+   data.forEach(function(d) {
+      d["SEARCH_ID"] = +d["SEARCH_ID"];
+      d["SUBJECT_ID"] = +d["SUBJECT_ID"];
+      d["ASSOC"] = +d["ASSOC"];
+      d["LOVE"] = +d["LOVE"];
+      d["HATE"] = +d["HATE"];
+      d["AMBIV"] = +d["AMBIV"];
+      d["WANT"] = +d["WANT"];
+      d["NEED"] = +d["NEED"];
+      d["SUBSIST"] = +d["SUBSIST"];
+      d["GOOD"] = +d["GOOD"];
+      d["EVIL"] = +d["EVIL"];
+      d["DEMEAN"] = +d["DEMEAN"];
+      //d["SUBJECT"] = +d["SUBJECT"];
+      //d["INFO"] = +d["INFO"];
+      d["TOPIC_ID"] = +d["TOPIC_ID"];
+  });
+  
+  g_data = data;
+}
+
+function updatePlot() {
+   data = g_data;
+   
+   var xAxisSel = document.getElementById("xAxisClass").value;
+   var yAxisSel = document.getElementById("yAxisClass").value;
+   var sAxisSel = document.getElementById("sAxisClass").value;
+   var cAxisSel = document.getElementById("cAxisClass").value;
+   data.forEach(function(d) {
+      d.x = d[xAxisSel];
+      d.y = d[yAxisSel];
+      d.s = d[sAxisSel];
+      d.c = d[cAxisSel];
+   });
+    
+    
+   // don't want dots overlapping axis, so add in buffer to data domain
+   domainScaler = function(data, scaler) {return [d3.min(data, scaler)-Math.abs(0.2*d3.min(data, scaler)), d3.max(data, scaler)+Math.abs(0.2*d3.max(data, scaler))]};
+   xScale.domain(domainScaler(data, xValue));
+   yScale.domain(domainScaler(data, yValue));
+   sScale.domain(domainScaler(data, sValue));
+   //cScale.domain(domainScaler(data, sValue));
+
+   svg.selectAll("*").remove();
+
+   svg.append("rect")
+      .attr("class", "overlay")
+      .attr("width", width)
+      .attr("height", height);
+   
+   // x-axis
+   svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text(xAxisSel);
+
+   // y-axis
+   svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+      .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text(yAxisSel);
+
+   // draw dots
+   svg.selectAll(".dot")
+      .data(data)
+      .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", sMap)
+      //.attr("cx", xMap)
+      //.attr("cy", yMap)
+      .style("fill", function(d) { return color(cValue(d));}) 
+      .on("mouseover", function(d) {
+         tooltip.transition()
+               .duration(200)
+               .style("opacity", .9);
+         tooltip.html(d["SUBJECT"] + "<br/> (" + xValue(d) + ", " + yValue(d) + ")")
+               .style("left", (d3.event.pageX + 5) + "px")
+               .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(d) {
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+      
+      })
+      .attr("transform", transform);
+
+   // draw legend
+   var legend = svg.selectAll(".legend")
+      .data(color.domain())
+      .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+   // draw legend colored rectangles
+   legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+   // draw legend text
+   legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d;})
+}
+
+function zoom() {
+   var circle = svg.selectAll(".dot")
+   circle.attr("transform", transform);
+}
+
+function transform(d) {
+  return "translate(" + x(xMap(d)) + "," + y(yMap(d)) + ")";
+}
+
+// load data
+data = d3.csv("./data.csv", function(data) { g_data = data; createPlot(data); updatePlot(); });
+
+
+</script>
+
+</body>
+</html>
