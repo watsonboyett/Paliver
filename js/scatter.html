@@ -1,3 +1,7 @@
+<!-- TODO: fix x/y axis positions -->
+<!-- TODO: fix x/y axis label zooming -->
+<!-- TODO: fix color labels/refreshing -->
+
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
@@ -40,10 +44,18 @@ svg {
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
-<select id="xAxisClass" onchange="updatePlot()"></select>
-<select id="yAxisClass" onchange="updatePlot()"></select>
-<select id="sAxisClass" onchange="updatePlot()"></select>
-<select id="cAxisClass" onchange="updatePlot()"></select>
+<br/>
+X Axis: <select id="xAxisClass" onchange="updatePlot()"></select>
+Y Axis: <select id="yAxisClass" onchange="updatePlot()"></select>
+Size: <select id="sAxisClass" onchange="updatePlot()"></select>
+Color: <select id="cAxisClass" onchange="updatePlot()"></select>
+<br/>
+
+<svg width="20" height="20"></svg>
+
+<br/>
+Subject: <input type="text" name="SubjectInput" value="">
+Topic: <input type="text" name="TopicInput" value="">
 <br/>
 
 <script>
@@ -58,19 +70,15 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
  * axis - sets up axis
  */ 
 
-var x = d3.scale.linear()
-    .domain([0, width])
-    .range([0, width]);
-
-var y = d3.scale.linear()
-    .domain([0, height])
-    .range([0, height]);
+var yZoom = d3.scale.linear().domain([0, height]).range([margin.top, height]);
     
 // setup x 
 var xValue = function(d) { return d.x;}, // data -> value
    xScale = d3.scale.linear().range([0, width]), // value -> display
-   xMap = function(d) { return xScale(xValue(d));}, // data -> display
-   xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+   xMap = function(d) { return xScale(xValue(d));}; // data -> display
+
+var xZoom = d3.scale.linear().domain([0, width]).range([margin.left, width]),
+   xAxis = d3.svg.axis().scale(xZoom).orient("bottom");
 
 // setup y
 var yValue = function(d) { return d.y;}, // data -> value
@@ -82,19 +90,19 @@ var yValue = function(d) { return d.y;}, // data -> value
 var sValue = function(d) { return d.s;},
    sScale = d3.scale.linear().range([2, 20]),
    sMap = function(d) { return sScale(sValue(d)); };
-    
+   
 // setup fill color
 var cValue = function(d) { return d.c;},
    color = d3.scale.category10();
 
 // add the graph canvas to the body of the webpage
-var svg = d3.select("body").append("svg")
+var svg = d3.select("body").select("svg")
    .attr("width", width + margin.left + margin.right)
    .attr("height", height + margin.top + margin.bottom)
    .append("g")
    //.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-   .call(d3.behavior.zoom().x(x).y(y).scaleExtent([0.5, 10]).on("zoom", zoom));
-    
+   .call(d3.behavior.zoom().x(xZoom).y(yZoom).scaleExtent([0.5, 10]).on("zoom", zoom));
+   
 // add the tooltip area to the webpage
 var tooltip = d3.select("body").append("div")
    .attr("class", "tooltip")
@@ -183,18 +191,20 @@ function updatePlot() {
       .attr("width", width)
       .attr("height", height);
    
-   // x-axis
+   // x-axis (right)
    svg.append("g")
-      .attr("class", "x axis")
+      .attr("class", "x axis left")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
       .append("text")
       .attr("class", "label")
       .attr("x", width)
-      .attr("y", -6)
+      .attr("y", 0)
       .style("text-anchor", "end")
       .text(xAxisSel);
 
+
+      
    // y-axis
    svg.append("g")
       .attr("class", "y axis")
@@ -261,7 +271,7 @@ function zoom() {
 }
 
 function transform(d) {
-  return "translate(" + x(xMap(d)) + "," + y(yMap(d)) + ")";
+  return "translate(" + xZoom(xMap(d)) + "," + yZoom(yMap(d)) + ")";
 }
 
 // load data
