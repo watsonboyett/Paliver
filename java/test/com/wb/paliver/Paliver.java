@@ -12,23 +12,26 @@ public class Paliver {
 	public static void main(String[] args) {
 		try {
 			String dbType = "DerbyEmbedded";
-			String searchType = "Random";
 			DbApi dbApi = new DbApi(dbType);
+			
+			String searchType = "Bing";
 			SearchApi searchApi = new SearchApi(searchType);
-
 			
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
 			String timestampStr = dateFormat.format(timestamp);
 			String dbName;
+			
 			// dbName = "//localhost/db_test?user=root";
-			dbName = "F:/github/Paliver/data/DbTest_" + timestampStr;
+			dbName = "E:/home/projects/Paliver/data/DbTest_" + timestampStr;
 			dbApi.createDb(dbName);
 
 			
-			String[] subjects = PaliverSubjects.Subjects;
+			//String[] subjects = PaliverSubjects.Subjects;
+			String[] subjects = MarchMadness2017.Subjects;
 
-			for (int subjectIter = 0; subjectIter < subjects.length; subjectIter++) {
+			for (int subjectIter = 0; subjectIter < subjects.length; subjectIter++)
+			{
 				String subjectCurr = subjects[subjectIter];
 				SubjectInfo si = new SubjectInfo();
 				si.subject = subjectCurr;
@@ -43,14 +46,18 @@ public class Paliver {
 				sd.subject_id = subject_id;
 
 				
-				String[] queryBase = { "", "i love ", "i hate ", "i want ",
-						"i need ", " is good", " is bad" };
+				String[] queryBase = { "",
+						"i love ", "i hate ",
+						"i want ", "i need ",
+						" is good", " is bad" };
 
-				for (int queryIter = 0; queryIter < queryBase.length; queryIter++) {
+				for (int queryIter = 0; queryIter < queryBase.length; queryIter++)
+				{
 					SearchResult sr = new SearchResult();
 
 					String query = "";
-					if (queryIter < 5) {
+					if (queryIter < 5)
+					{
 						query = queryBase[queryIter] + subjectCurr;
 					} else {
 						query = subjectCurr + queryBase[queryIter];
@@ -60,7 +67,8 @@ public class Paliver {
 					
 					
 					long pageCount = -1;
-					try {
+					try
+					{
 						pageCount = searchApi.getPageCount(query);
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -73,7 +81,8 @@ public class Paliver {
 					dbApi.saveSearchResult(sr);
 
 					
-					switch (queryIter) {
+					switch (queryIter) 
+					{
 						case 0:
 							sd.assoc = pageCount;
 							break;
@@ -98,7 +107,7 @@ public class Paliver {
 					}
 
 					System.out.println("Query:" + query + " | Hit count: " + pageCount);
-					//Thread.sleep(2000);
+					Thread.sleep(10000);
 				}
 
 				sd.updateAmbiv();
