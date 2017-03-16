@@ -24,6 +24,7 @@ package com.wb.paliver;
 import java.io.IOException;
 
 import com.wb.paliver.search.SearchImpl_Google;
+import com.wb.paliver.search.SearchImpl_Bing;
 import com.wb.paliver.search.SearchImpl_Random;
 import com.wb.paliver.search.SearchInterface;
 
@@ -49,11 +50,20 @@ public class SearchApi {
 	public SearchApi(String searchType) {
 
 		// TODO: make this a factory class/method
-		if (searchType.equals(SearchImpl_Google.searchType)) {
+		if (searchType.equals(SearchImpl_Google.searchType))
+		{
 			si = new SearchImpl_Google();
-		} else if (searchType.equals(SearchImpl_Random.searchType)) {
+		} 
+		else if (searchType.equals(SearchImpl_Bing.searchType))
+		{
+			si = new SearchImpl_Bing();
+		} 
+		else if (searchType.equals(SearchImpl_Random.searchType))
+		{
 			si = new SearchImpl_Random();
-		} else {
+		} 
+		else
+		{
 			System.out.println("Invalid search type!");
 		}
 	}
