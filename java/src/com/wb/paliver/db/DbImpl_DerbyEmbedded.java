@@ -53,7 +53,7 @@ public class DbImpl_DerbyEmbedded implements DbInterface {
 
 	// ---------------------------------------------------------------- //
 	
-	@Override
+	
 	public boolean createDb(String dbName) {
 		this.dbName = dbName;
 				
@@ -71,7 +71,7 @@ public class DbImpl_DerbyEmbedded implements DbInterface {
 		return isCreated;
 	}
 	
-	@Override
+	
 	public boolean openDb(String dbName) {
 		this.dbName = dbName;
 		
@@ -91,7 +91,7 @@ public class DbImpl_DerbyEmbedded implements DbInterface {
 		return isOpen;
 	}
 	
-	@Override
+	
 	public boolean closeDb() {
 		boolean isClosed = false;
 		try {
@@ -112,7 +112,7 @@ public class DbImpl_DerbyEmbedded implements DbInterface {
 		return isClosed;
 	}
 	
-	@Override
+	
 	public boolean isOpen() {
 		boolean isOpen = false;
 		try {
@@ -128,12 +128,12 @@ public class DbImpl_DerbyEmbedded implements DbInterface {
 		return isOpen;
 	}
 	
-	@Override
+	
 	public Connection getConnection() {
 		return conn;
 	}
 
-	@Override
+	
 	public String[] showTables() {
 		String[] tables = null; 
 		try {

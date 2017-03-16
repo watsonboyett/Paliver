@@ -30,7 +30,7 @@ public class SearchImpl_Random implements SearchInterface {
 
 	public static final String searchType = "Random";
 
-	@Override
+	
 	public String getPage(String query) throws IOException {
 		final Random random = new Random();
 		return new BigInteger(64, random).toString();        

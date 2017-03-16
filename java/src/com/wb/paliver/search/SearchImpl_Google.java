@@ -36,16 +36,15 @@ public class SearchImpl_Google implements SearchInterface {
 	public static final String searchType = "Google";
 	
 	// URL parts that make up the full search url
-	private String urlBase = "http://www.google.com";
+	private String urlBase = "https://www.google.com";
 	private String urlSearchSuffix = "/search?";
 	
 	// the regex pattern to search for in the HTML results string
 	private String pageCountPattern = "id=\"resultStats\">About (.*?) results";
 	
-	//private String userAgent = "Mozilla/5.0 (X11; U; Linux x86_64; en-GB; rv:1.8.1.6) Gecko/20070723 Iceweasel/2.0.0.6 (Debian-2.0.0.6-0etch1)";
-	private String userAgent = "Mozilla/5.0 (X11; U; Linux x86_64; en-GB; rv:1.8.1.6)";
+	private String userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.85 Safari/537.36";
 	
-	@Override
+	
 	public String getPage(String query) throws IOException {
 		// open connection to full URL and get returned page
 		String urlFull = urlBase;
@@ -61,18 +60,21 @@ public class SearchImpl_Google implements SearchInterface {
 			InputStream inStream = conn.getInputStream();
 			in = new BufferedReader(new InputStreamReader(inStream));
 		} catch (IOException e) {
-			e.getMessage();
+			String err = e.getMessage();
+			System.out.println(err);
 		}
 		
         // save returned page into a string
         String page = "";
         String line;
-        while ((in != null) && (line = in.readLine()) != null) {
-        	page = page + line;
+        if ((in != null))
+        {
+	        while ((in != null) && (line = in.readLine()) != null) {
+	        	page = page + line;
+	        }
+	        in.close();
+	        //System.out.println(page);
         }
-        in.close();
-        //System.out.println(page);
-        
         return page;
 	}
 	

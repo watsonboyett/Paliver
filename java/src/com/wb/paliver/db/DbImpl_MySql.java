@@ -50,13 +50,13 @@ public class DbImpl_MySql implements DbInterface {
 
 	// ---------------------------------------------------------------- //
 	
-	@Override
+	
 	public boolean createDb(String dbName) {
 		// not sure how to do this programmatically
 		return false;
 	}
 	
-	@Override
+	
 	public boolean openDb(String dbName) {
 		this.dbName = dbName;
 		
@@ -74,7 +74,7 @@ public class DbImpl_MySql implements DbInterface {
 		return isOpen;
 	}
 	
-	@Override
+	
 	public boolean closeDb() {
 		boolean isClosed = false;
 		try {
@@ -90,7 +90,7 @@ public class DbImpl_MySql implements DbInterface {
 		return isClosed;
 	}
 	
-	@Override
+	
 	public boolean isOpen() {
 		boolean isOpen = false;
 		try {
@@ -106,12 +106,12 @@ public class DbImpl_MySql implements DbInterface {
 		return isOpen;
 	}
 	
-	@Override
+	
 	public Connection getConnection() {
 		return conn;
 	}
 
-	@Override
+	
 	public String[] showTables() {
 		String[] tables = null; 
 		try {
